@@ -8,7 +8,7 @@ export class FileUtil{
     private static readonly MAC_HOST_PATH:string = "/etc/hosts";
     private static readonly META_FILE_NAME:string = "meta.json";
 
-    public static createDefaultHostFloder(appRoot:string){
+    public static createDefaultHostFolder(appRoot:string){
         OutputChannel.appendLine(`Ready to create ${path.join(appRoot, '.host')}`);
         fs.mkdirSync(path.join(appRoot, '.host'));
         // create current host file
@@ -57,20 +57,20 @@ export class FileUtil{
         }
     }
 
-    public static gethostConfigFileList(appRoot:string):any{
-        OutputChannel.appendLine(`Ready to get usefull host config from : ${path.join(appRoot, '.host')} floder.`);
+    public static getHostConfigFileList(appRoot:string):any{
+        OutputChannel.appendLine(`Ready to get useful host config from : ${path.join(appRoot, '.host')} folder.`);
         let hostFiles:string[] = fs.readdirSync(path.join(appRoot, '.host'));
-        let usefullHostFiles:string[] = new Array<string>();
+        let usefulHostFiles:string[] = new Array<string>();
         if(hostFiles && hostFiles.length > 0){
             hostFiles.forEach((hostFile)=>{
                 let fileStats:fs.Stats = fs.statSync(path.join(appRoot, '.host', hostFile));
                 if(fileStats.isFile() && hostFile !== this.META_FILE_NAME){
-                    usefullHostFiles.push(hostFile);
+                    usefulHostFiles.push(hostFile);
                 }
             });
         }
-        OutputChannel.appendLine(`Get usefull host config from : ${path.join(appRoot, '.host')} success`);
-        return usefullHostFiles;
+        OutputChannel.appendLine(`Get useful host config from : ${path.join(appRoot, '.host')} success`);
+        return usefulHostFiles;
     }
 
     public static syncChooseHost(appRoot:string): any{
@@ -78,7 +78,7 @@ export class FileUtil{
         let sysHostPath = osType.indexOf('win32') > -1 ? this.WIN32_HOST_PATH : this.MAC_HOST_PATH;
         let data = '';
         let metaInfo = this.getMetaInfo(appRoot);
-        let files = this.gethostConfigFileList(appRoot);
+        let files = this.getHostConfigFileList(appRoot);
         if(files && files.length >0){
             files.forEach((file:any)=>{
                 if(metaInfo.cur.indexOf(path.basename(file,'.host')) > -1){

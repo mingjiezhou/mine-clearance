@@ -18,7 +18,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostConfig>
     if (!FileUtil.pathExists(path.join(this.userRoot, '.host'))) {
       //if not exists create default host floder
       try {
-        FileUtil.createDefaultHostFloder(this.userRoot)
+        FileUtil.createDefaultHostFolder(this.userRoot)
       } catch (e) {
         vscode.window.showInformationMessage('host need Administrator permission!')
       }
@@ -30,7 +30,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostConfig>
   }
 
   getChildren(element?: HostConfig): Thenable<HostConfig[]> {
-    let files: string[] = FileUtil.gethostConfigFileList(this.userRoot)
+    let files: string[] = FileUtil.getHostConfigFileList(this.userRoot)
     let metaInfo = FileUtil.getMetaInfo(this.userRoot)
     if (files && files.length > 0) {
       let hostConfigs = new Array<HostConfig>()
@@ -60,13 +60,13 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostConfig>
     if (item.filePath) {
       let metaInfo = FileUtil.getMetaInfo(this.userRoot)
       if (metaInfo.cur.indexOf(item.label) > -1) {
-        vscode.window.showInformationMessage('This host is choosed areadly!')
+        vscode.window.showInformationMessage('This host is already chosen!')
       } else {
         metaInfo.cur.push(item.label)
         FileUtil.setMetaInfo(this.userRoot, metaInfo)
         FileUtil.syncChooseHost(this.userRoot)
         this._onDidChangeTreeData.fire(null)
-        vscode.window.showInformationMessage('This host is choosed areadly!')
+        vscode.window.showInformationMessage('This host is already chosen!')
       }
     }
   }
@@ -97,9 +97,9 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostConfig>
       .showInputBox({ placeHolder: 'Enter the new host name', value: item.label })
       .then(value => {
         if (value) {
-          let files: string[] = FileUtil.gethostConfigFileList(this.userRoot)
+          let files: string[] = FileUtil.getHostConfigFileList(this.userRoot)
           if (files && files.indexOf(`${value}.host`) > -1) {
-            vscode.window.showInformationMessage('This name is aready exist!')
+            vscode.window.showInformationMessage('This name is already exist!')
           } else {
             FileUtil.renameHostFile(this.userRoot, item.label, value)
             let metaInfo = FileUtil.getMetaInfo(this.userRoot)
@@ -121,7 +121,7 @@ export class HostTreeDataProvider implements vscode.TreeDataProvider<HostConfig>
       if (!value) {
         return
       }
-      let files: string[] = FileUtil.gethostConfigFileList(this.userRoot)
+      let files: string[] = FileUtil.getHostConfigFileList(this.userRoot)
       let a = files.filter(file => {
         let basename = path.basename(file, '.host')
         return basename === value
